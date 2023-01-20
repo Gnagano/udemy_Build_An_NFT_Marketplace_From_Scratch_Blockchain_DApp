@@ -70,3 +70,6 @@ typechain-types
 cache
 artifacts
 
+# private key
+p-key.txt
+

@@ -1,5 +1,8 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+const fs = require("fs");
+
+const keyData = fs.readFileSyne("./p-key.txt", { encoding: "utf8", flag: "r" });
 
 const projectId = "ed930513e25646a6a61bceb01565bd4b";
 
@@ -11,11 +14,11 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url: `https://polygon-mumbai.infura.io/v3/${projectId}`,
-      accounts: []
+      accounts: [keyData]
     },
     mainnet: {
       url: `https://polygon-mainnet.infura.io/v3/${projectId}`,
-      accounts: []
+      accounts: [keyData]
     }
   },
   solidity: {

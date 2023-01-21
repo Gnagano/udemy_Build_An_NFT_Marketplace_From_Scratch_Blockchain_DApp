@@ -1,0 +1,65 @@
+@startuml
+
+/'
+  図の中で目立たせたいエンティティに着色するための
+  色の名前（定数）を定義します。
+'/
+!define MAIN_ENTITY #E2EFDA-C6E0B4
+!define MAIN_ENTITY_2 #FCE4D6-F8CBAD
+!define TRANSACTION #FCE4D6-F8CBAD
+!define INTERSECTION #D3DEF1-D3DEF1
+
+/' 他の色も、用途が分りやすいように名前をつけます。 '/
+!define METAL #F2F2F2
+' -D9D9D9
+!define MASTER_MARK_COLOR AAFFAA
+!define TRANSACTION_MARK_COLOR FFAA00
+!define INTERSECTION_COLOR D3DEF1
+
+/'
+  デフォルトのスタイルを設定します。
+  この場合の指定は class です。entity ではエラーになります。
+'/
+skinparam class {
+  BackgroundColor METAL
+  BorderColor Black
+  ArrowColor Black
+}
+
+package "NFT" {
+  class NFT {
+    # address contractAddress
+    - Counters _tokenIds
+    ---
+    # constructor(marketPlaceAddress: address)
+    # mintToken(tokenURI:string)
+  }
+
+  class KBMarket {
+    - Counters _tokenIds
+    - Counters _tokensSold
+    - address_payable owner
+    - uint256 listingPrice 
+    ---
+    # constructor()
+    # getListingPrice()
+    # mintMarketItem(address nftContract, uint tokenId, uint price)
+    # createMakertSale(address nftContract, uint itemId)
+    # fetchMarketTokens()
+    # fetchMyNFTs()   
+  }
+
+  struct MarketTokenMinted {
+    uint_indexed itemId
+    address_indexed nftContract
+    uint256 tokenId
+    address seller
+    address owner
+    uint256 price
+    bool sold
+  }
+}
+MarketTokenMinted -u-* KBMarket
+MarketTokenMinted <-d- KBMarket
+
+@enduml

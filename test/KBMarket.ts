@@ -1,8 +1,7 @@
-import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { expect } from "chai";
-import { ethers } from "hardhat";
-import * as chai from "chai";
+// import * as chai from "chai";
+const hre = require("hardhat");
+const { ethers } = hre;
+import { KBMarket } from "./../typechain-types/contracts/KBMarket";
 
 describe("KBMarket", function () {
   it("Should mint and trade NFTs", async function () {
@@ -14,7 +13,7 @@ describe("KBMarket", function () {
 
     const NFT = await ethers.getContractFactory("NFT");
     const nft = await NFT.deploy(marketAddress);
-    await nft.deploy();
+    await nft.deployed();
 
     // Test to receive listing price and auction price
     const nftContractAddress = nft.address;
@@ -24,14 +23,14 @@ describe("KBMarket", function () {
 
     const auctionPrice = ethers.utils.parseUnits("100", "ether");
 
-    // test for minting
+    // Test for minting
     await nft.mintToken("https-t1");
     await nft.mintToken("https-t2");
 
-    await market.marketMarketItem(nftContractAddress, 1, auctionPrice, {
+    await market.makeMarketItem(nftContractAddress, 1, auctionPrice, {
       value: listingPrice
     });
-    await market.marketMarketItem(nftContractAddress, 2, auctionPrice, {
+    await market.makeMarketItem(nftContractAddress, 2, auctionPrice, {
       value: listingPrice
     });
 
@@ -44,7 +43,22 @@ describe("KBMarket", function () {
       value: auctionPrice
     });
 
-    const items = await market.fetchMarketTokens();
+    let items = await market.fetchMarketTokens();
+
+    items = await Promise.all(
+      items.map(async (i: any) => {
+        // get the uri of the value
+        const tokenUri = await nft.tokenURI(i.tokenId);
+        let item = {
+          price: i.price.toString(),
+          tokenId: i.tokenId.toString(),
+          seller: i.seller,
+          owner: i.owner,
+          tokenUri
+        };
+        return item;
+      })
+    );
 
     // Test out all the items
     console.log("items", items);

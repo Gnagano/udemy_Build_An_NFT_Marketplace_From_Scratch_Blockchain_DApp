@@ -2,7 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 const fs = require("fs");
 
-const keyData = fs.readFileSyne("./p-key.txt", { encoding: "utf8", flag: "r" });
+const keyData = fs.readFileSync("./p-key.txt", { encoding: "utf8", flag: "r" });
 
 const projectId = "ed930513e25646a6a61bceb01565bd4b";
 

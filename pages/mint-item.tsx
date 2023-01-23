@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Image from "next/image";
 
 // Web3
 import { ethers } from "ethers";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import Web3Modal from "web3modal";
 
 import { create as ipfsHttpClient } from "ipfs-http-client";
+// Config
 
 // Contract
 import KBMarket from "../artifacts/contracts/KBMarket.sol/KBMarket.json";
@@ -14,13 +14,21 @@ import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 
 // Config
 import { nftaddress, nftmarketaddress } from "../config";
+import { ipfsProjectId, ipfsProjectSecret } from "../config.ipfs";
 
 // In this component we set the ipfs up to host our nft data of
 // file storage
+const auth = `Basic ${Buffer.from(
+  `${ipfsProjectId}:${ipfsProjectSecret}`
+).toString("base64")}`;
+
 const client = ipfsHttpClient({
   host: "ipfs.infura.io",
   port: 5001,
-  protocol: "https"
+  protocol: "https",
+  headers: {
+    authorization: auth
+  }
 });
 
 export default function MintItem() {
@@ -40,7 +48,9 @@ export default function MintItem() {
       const added = await client.add(file, {
         progress: (prog) => console.log(`received: ${prog}`)
       });
-      const url = `https://ipfs.infura.io:5001/api/v0/${added.path}`;
+      const cid = added.cid.toV1();
+
+      const url = `https://${cid}.ipfs.dweb.link/`;
       setFileUrl(url);
     } catch (error) {
       console.log(`Error uploading file:`, error);
@@ -57,10 +67,11 @@ export default function MintItem() {
 
     try {
       const added = await client.add(data);
-      const url = `https://ipfs.infura.io:5001/api/v0/${added.path}`;
+      const cid = added.cid.toV1();
+      const url = `https://${cid}.ipfs.dweb.link/`;
 
       // Run a function that created sale and passes in the url
-      createSale(url);
+      await createSale(url);
     } catch (error) {
       console.log(`Error uploading file:`, error);
     }
@@ -74,10 +85,12 @@ export default function MintItem() {
     const signer = provider.getSigner();
 
     // We want to create the token
+    console.log({ nftaddress });
     let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
-    let transaction = await contract.mintToken(url);
-    let tx = await transaction.wait();
-    let event = tx.events[0];
+    let receipt = await contract.mintToken(url);
+
+    let transaction = await receipt.wait();
+    let event = transaction.events[0];
     let value = event.args[2];
     let tokenId = value.toNumber();
     const price = ethers.utils.parseUnits(formInput.price, "ether");
@@ -120,16 +133,20 @@ export default function MintItem() {
         />
         <input className="mt-4" name="Asset" type="file" onChange={onChange} />
         {fileUrl && (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             className="rounded mt-4"
-            style={{ width: "350px" }}
             src={fileUrl}
+            width={350}
+            height={350}
             alt=""
           />
         )}
         <button
           className="font-bold mt-4 bg-purple-500 text-white rounded p-4 shadow-lg"
-          onClick={createMarket}
+          onClick={async () => {
+            await createMarket();
+          }}
         >
           Mint NFT
         </button>

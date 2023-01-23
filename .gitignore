@@ -72,4 +72,4 @@ artifacts
 
 # private key
 p-key.txt
-
+config.ipfs.js

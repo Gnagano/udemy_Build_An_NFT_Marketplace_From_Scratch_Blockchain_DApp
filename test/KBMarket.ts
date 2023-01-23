@@ -24,8 +24,19 @@ describe("KBMarket", function () {
     const auctionPrice = ethers.utils.parseUnits("100", "ether");
 
     // Test for minting
-    await nft.mintToken("https-t1");
-    await nft.mintToken("https-t2");
+    const receipt1 = await nft.mintToken("https-t1");
+    const receipt2 = await nft.mintToken("https-t2");
+
+    const tx1 = await receipt1.wait();
+    const tx2 = await receipt2.wait();
+
+    // Event
+    console.log({
+      mintToken: {
+        "https-t1": tx1.events[0],
+        "https-t2": tx2.events[0]
+      }
+    });
 
     await market.makeMarketItem(nftContractAddress, 1, auctionPrice, {
       value: listingPrice

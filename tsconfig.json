@@ -8,7 +8,7 @@
     "target": "es2020",
     "allowJs": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "CommonJS",
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "moduleResolution": "node",

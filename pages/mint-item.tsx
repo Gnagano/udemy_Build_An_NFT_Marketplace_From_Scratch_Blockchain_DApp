@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 // Web3
 import { ethers } from "ethers";
@@ -24,7 +25,7 @@ const client = ipfsHttpClient({
 
 export default function MintItem() {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [formInput, setFormInput] = useState({
+  const [formInput, updateFormInput] = useState({
     price: "",
     name: "",
     description: ""
@@ -92,4 +93,47 @@ export default function MintItem() {
     await transaction.wait();
     router.push("./");
   };
+
+  return (
+    <div className="flex justify-center">
+      <div className="w-1/2 flex flex-col pb-12">
+        <input
+          className="mt-8 border rounded p-4"
+          placeholder="Asset Name"
+          onChange={(e) =>
+            updateFormInput({ ...formInput, name: e.target.value })
+          }
+        />
+        <textarea
+          className="mt-2 border rounded p-4"
+          placeholder="Asset Description"
+          onChange={(e) =>
+            updateFormInput({ ...formInput, description: e.target.value })
+          }
+        />
+        <input
+          className="mt-2 border rounded p-4"
+          placeholder="Asset Price in Eth"
+          onChange={(e) =>
+            updateFormInput({ ...formInput, price: e.target.value })
+          }
+        />
+        <input className="mt-4" name="Asset" type="file" onChange={onChange} />
+        {fileUrl && (
+          <Image
+            className="rounded mt-4"
+            style={{ width: "350px" }}
+            src={fileUrl}
+            alt=""
+          />
+        )}
+        <button
+          className="font-bold mt-4 bg-purple-500 text-white rounded p-4 shadow-lg"
+          onClick={createMarket}
+        >
+          Mint NFT
+        </button>
+      </div>
+    </div>
+  );
 }

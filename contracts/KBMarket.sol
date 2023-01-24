@@ -122,6 +122,8 @@ contract KBMarket is ReentrancyGuard {
     idToMarketToken[itemId].sold = true;
     _tokensSold.increment();
 
+    // console.log(idToMarketToken[itemId].owner);
+
     payable(owner).transfer(listingPrice);
   }
 
@@ -164,7 +166,7 @@ contract KBMarket is ReentrancyGuard {
     MarketToken[] memory items = new MarketToken[](itemCount);
     for (uint i = 0; i< totalItemCount; i++) {
       if (idToMarketToken[i + 1].owner == msg.sender) {
-        uint currentId = idToMarketToken[i+i].itemId;
+        uint currentId = i + 1;
 
         // Current Array
         MarketToken storage currentItem = idToMarketToken[currentId];
@@ -172,7 +174,7 @@ contract KBMarket is ReentrancyGuard {
         currentIndex += 1;
       }
     }
-    
+
     return items;
   }
 
@@ -195,7 +197,7 @@ contract KBMarket is ReentrancyGuard {
     MarketToken[] memory items = new MarketToken[](itemCount);
     for (uint i = 0; i< totalItemCount; i++) {
       if (idToMarketToken[i + 1].seller == msg.sender) {
-        uint currentId = idToMarketToken[i+i].itemId;
+        uint currentId = i + 1;
 
         // Current Array
         MarketToken storage currentItem = idToMarketToken[currentId];

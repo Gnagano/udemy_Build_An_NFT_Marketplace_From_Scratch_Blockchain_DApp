@@ -22,7 +22,7 @@ function KryptoBirdMarketplace({ Component, pageProps }: AppProps) {
   return (
     <div>
       <nav className="border-b p-6" style={{ backgroundColor: "purple" }}>
-        <p className="text-4x1 font-bold text-white">KryptoBiard Marketplace</p>
+        <p className="text-4x1 font-bold text-white">Krypto Bird Marketplace</p>
         <div className="flex mt-4 justify-center">
           <Link href="/">
             <div className="mr-4">Main Marketplace</div>

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "deploy_local": "npx hardhat run --network localhost",
     "build": "next build",
     "compile": "npx hardhat compile",
     "start": "next start",

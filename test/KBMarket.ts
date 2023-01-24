@@ -71,7 +71,25 @@ describe("KBMarket", function () {
       })
     );
 
-    // Test out all the items
-    console.log("items", items);
+    console.log("Unsold items", items);
+
+    let myItems = await market.connect(buyerAddress).fetchMyNFTs();
+
+    myItems = await Promise.all(
+      myItems.map(async (i: any) => {
+        // get the uri of the value
+        const tokenUri = await nft.tokenURI(i.tokenId);
+        let item = {
+          price: i.price.toString(),
+          tokenId: i.tokenId.toString(),
+          seller: i.seller,
+          owner: i.owner,
+          tokenUri
+        };
+        return item;
+      })
+    );
+
+    console.log("Sold Items", myItems);
   });
 });

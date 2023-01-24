@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "deploy_local": "npx hardhat run --network localhost",
+    "deploy_mumbai": "npx hardhat run --network mumbai",
     "build": "next build",
     "compile": "npx hardhat compile",
     "start": "next start",

@@ -5,8 +5,8 @@ import { ethers } from "ethers";
 import { useState } from "react";
 import Web3Modal from "web3modal";
 
+// IPFS
 import { create as ipfsHttpClient } from "ipfs-http-client";
-// Config
 
 // Contract
 import KBMarket from "../artifacts/contracts/KBMarket.sol/KBMarket.json";
@@ -85,7 +85,6 @@ export default function MintItem() {
     const signer = provider.getSigner();
 
     // We want to create the token
-    console.log({ nftaddress });
     let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
     let receipt = await contract.mintToken(url);
 

@@ -197,7 +197,7 @@ contract KBMarket is ReentrancyGuard {
     MarketToken[] memory items = new MarketToken[](itemCount);
     for (uint i = 0; i< totalItemCount; i++) {
       if (idToMarketToken[i + 1].seller == msg.sender) {
-        uint currentId = idToMarketToken[i+i].itemId;
+        uint currentId = i + 1;
 
         // Current Array
         MarketToken storage currentItem = idToMarketToken[currentId];

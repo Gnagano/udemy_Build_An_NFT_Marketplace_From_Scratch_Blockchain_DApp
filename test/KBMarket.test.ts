@@ -1,7 +1,5 @@
-// import * as chai from "chai";
-const hre = require("hardhat");
-const { ethers } = hre;
-import { KBMarket } from "./../typechain-types/contracts/KBMarket";
+import { ethers } from "hardhat";
+import BigNumber from "bignumber.js";
 
 describe("KBMarket", function () {
   it("Should mint and trade NFTs", async function () {
@@ -18,8 +16,8 @@ describe("KBMarket", function () {
     // Test to receive listing price and auction price
     const nftContractAddress = nft.address;
 
-    let listingPrice = await market.getListingPrice();
-    listingPrice = listingPrice.toString();
+    const listingPrice = await market.getListingPrice();
+    const listingPriceString = listingPrice.toString();
 
     const auctionPrice = ethers.utils.parseUnits("100", "ether");
 
@@ -33,16 +31,16 @@ describe("KBMarket", function () {
     // Event
     console.log({
       mintToken: {
-        "https-t1": tx1.events[0],
-        "https-t2": tx2.events[0]
+        "https-t1": tx1.events && tx1.events[0],
+        "https-t2": tx2.events && tx2.events[0]
       }
     });
 
     await market.makeMarketItem(nftContractAddress, 1, auctionPrice, {
-      value: listingPrice
+      value: listingPriceString
     });
     await market.makeMarketItem(nftContractAddress, 2, auctionPrice, {
-      value: listingPrice
+      value: listingPriceString
     });
 
     // Test for different addresses from different users - test accounts
@@ -54,7 +52,7 @@ describe("KBMarket", function () {
       value: auctionPrice
     });
 
-    let items = await market.fetchMarketTokens();
+    let items: any = await market.fetchMarketTokens();
 
     items = await Promise.all(
       items.map(async (i: any) => {
@@ -73,7 +71,7 @@ describe("KBMarket", function () {
 
     console.log("Unsold items", items);
 
-    let myItems = await market.connect(buyerAddress).fetchMyNFTs();
+    let myItems: any = await market.connect(buyerAddress).fetchMyNFTs();
 
     myItems = await Promise.all(
       myItems.map(async (i: any) => {
@@ -91,5 +89,26 @@ describe("KBMarket", function () {
     );
 
     console.log("Sold Items", myItems);
+
+    let itemsCreated: any = await market
+      // .connect(buyerAddress)
+      .fetchItemsCreated();
+
+    itemsCreated = await Promise.all(
+      itemsCreated.map(async (i: any) => {
+        // get the uri of the value
+        const tokenUri = await nft.tokenURI(i.tokenId);
+        let item = {
+          price: i.price.toString(),
+          tokenId: i.tokenId.toString(),
+          seller: i.seller,
+          owner: i.owner,
+          tokenUri
+        };
+        return item;
+      })
+    );
+
+    console.log("Created Items", itemsCreated);
   });
 });
